@@ -18,4 +18,38 @@ ATTACH 'ducklake:./descriptors/metadata.ducklake' as hea (
 conn.execute("use hea;")
 
 # This part is from the metadata.ducklake file
-print(conn.sql("show tables;"))
+# Print the names of all tables
+print("The names of all tables:")
+print(conn.sql("SHOW TABLES;"))
+
+# Query some metadata of the database
+max_avefe1_of_table_1: float = conn.query("SELECT max(ave_fe1) FROM hea_6_c_1;").fetchone()[0]
+print(f"The max ave_fe1 of table 1 is {max_avefe1_of_table_1}")
+print("\n")
+
+
+# This part is from the remote data (lakehouse)
+# Query some real data
+print("The first 10 rows of the data:")
+print(conn.sql("SELECT con_index, ave_fe1, rmse_ft2, hmix_data FROM hea_6_c_68 limit 10;"))
+
+
+# Query and display alloy components that meet specific property criteria
+print("Alloy components with desired properties:")
+
+elements: tuple[str, ...] = conn.query("""
+                                       SELECT elem1, elem2, elem3, elem4, elem5, elem6
+                                       FROM hea_elements_6
+                                       """).fetchone()
+print(f"6 elements of the HEA are {elements[0]}, {elements[1]}, {elements[2]}, {elements[3]}, {elements[4]}, {elements[5]}")
+
+print(conn.sql("""
+SELECT hea_6_c_192.con_index, hea_con_6.con1, hea_con_6.con2, hea_con_6.con3, hea_con_6.con4, hea_con_6.con5, hea_con_6.con6
+FROM hea_6_c_192
+LEFT JOIN hea_con_6 ON hea_6_c_192.con_index = hea_con_6.id
+WHERE ave_fe1 > 1.68
+AND pair_fe5 > 7.80
+AND gg0_data > 0.87
+AND tbtm_data > 1732
+AND rmse_hmix_data < 0.39;
+"""))
