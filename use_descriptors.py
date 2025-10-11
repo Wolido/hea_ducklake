@@ -6,6 +6,9 @@ import duckdb
 
 conn: duckdb.DuckDBPyConnection = duckdb.connect()
 
+# Install ducklake
+conn.execute("INSTALL ducklake;") # If you have already installed ducklake, you can skip this step.
+
 # Set up the connection
 conn.execute("SET s3_endpoint='idmlakehouse.tmslab.cn';")
 conn.execute("SET s3_url_style='path';")
