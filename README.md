@@ -1,4 +1,5 @@
-![IDM-logo](https://disc-wolido.oss-cn-beijing.aliyuncs.com/idm-logo/%E6%B5%85%E8%89%B2%E8%83%8C%E6%99%AFlogo-%E5%B7%A6%E5%8F%B3.png)
+<img src="https://disc-wolido.oss-cn-beijing.aliyuncs.com/idm-logo/%E6%B5%85%E8%89%B2%E8%83%8C%E6%99%AFlogo-%E5%B7%A6%E5%8F%B3.png" style="height: 60px" />
+
 # HEA DuckLake
 
 This project includes a foundational database for six principal elements high-entropy alloys, suitable for computations, ML training and predictions based on high-entropy alloys.
@@ -33,7 +34,7 @@ The database referenced by the `metadata.ducklake` file under the descriptors pa
 
 In a single city, queries on the public network can return results in as fast as 2 seconds. If there have been prior queries about this table, caching could make the query speed even faster. Previously, cross-city query speeds were around 4 seconds. In scenarios like cross-country or cross-continent, the speed might be a bit slower, but still fast enough.
 
-![Query of the  element components of six principal elements high-entropy alloys using descriptors](./demo-pics/qc.png)
+<img src="./demo-pics/qc.png" style="height: 200px" />
 
 ### Query on certain columns in the data table
 
@@ -41,9 +42,11 @@ Thanks to column storage technology, non-full-table queries do not require trans
 
 Queries on the con_index column and the other three descriptors are much faster, taking about 10 seconds, with most of the time spent transmitting the 10 million × 4 data back over the network.
 
-![Query on certain columns in the data table-1](./demo-pics/qd1.png)
+<img src="./demo-pics/qd1.png" style="height: 200px" />
 
-![Query on certain columns in the data table-2](./demo-pics/qd2.png)
+...
+
+<img src="./demo-pics/qd2.png" style="height: 200px">
 
 ## Additional Information
 
