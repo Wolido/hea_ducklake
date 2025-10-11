@@ -25,11 +25,6 @@ conn.execute("use hea;")
 print("The names of all tables:")
 print(conn.sql("SHOW TABLES;"))
 
-# Query some metadata of the database
-max_avefe1_of_table_1: float = conn.query("SELECT max(ave_fe1) FROM hea_6_c_1;").fetchone()[0]
-print(f"The max ave_fe1 of table 1 is {max_avefe1_of_table_1}")
-print("\n")
-
 
 # This part is from the remote data (lakehouse)
 # Query some real data
