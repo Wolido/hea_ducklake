@@ -8,6 +8,12 @@ The data is distributed in the form of DuckLake's lakehouse. The project contain
 
 The actual total data volume of the project is nearly 20TB. Thanks to DuckLake's lakehouse technology, you only need to download tens of megabytes of metadata to remotely access the entire database.
 
+There are two accessible data lakehouses in the project: one is the descriptors for high-entropy alloys under the `descriptor` path, and the other is a set of ML model prediction results under the pred_demo path. Files ending with `.ducklake` are metadata files for the lakehouse.
+
+The descriptor lakehouse contains a table of element combinations named `hea_elements_6`; a table of element composition ratios named `hea_con_6`; and an explanation table for descriptor field names named `descriptor_names`. These tables can help you better understand and use the lakehouse when querying the descriptor tables. The naming format for the descriptor data tables is `hea_6_c_x`, where `x` is the index of the element combination in the `hea_elements_6` table.
+
+The naming format for the tables in the prediction data lakehouse is `pred_x`, where `x` is the index of the element combination in the `hea_elements_6` table of the descriptor lakehouse.
+
 ## Usage: Taking the metadata under the descriptors path as an example
 
 ### Through DuckDB
