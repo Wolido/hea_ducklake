@@ -54,6 +54,14 @@ Queries on the con_index column and the other three descriptors are much faster,
 
 <img src="./demo-pics/qd2.png" style="height: 200px">
 
+### Full database query
+
+Similar to the previous example, use descriptors to query combinations of high-entropy alloys, but this time querying the entire database. This query example is written in Rust, with the code located in the `query_whole_db` path.
+
+Querying in a public network environment is costly and limited by network speed, so we completed this query in an internal network environment. For a database containing a total of 50 billion combinations, the full database query took 13 minutes and 11 seconds.
+
+<img src="./demo-pics/query_whole_db.png" style="height: 100px">
+
 ## Additional Information
 
 - The real data for this project is stored using OSS compatible with the S3 protocol. The metadata functions similarly to a data directory, enabling multiple users to access the data simultaneously.
