@@ -1,0 +1,10 @@
+[package]
+name = "query_whole_db"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.100"
+csv = "1.4.0"
+duckdb = { version = "1.4.1", features = ["bundled"] }
+indicatif = "0.18.0"
