@@ -77,9 +77,13 @@ descriptors 路径下 `metadata.ducklake` 文件引用的数据库总共包含 5
 
 - `init.sql` 中的内容是湖仓访问信息，例如 `s3_endpoint='idmlakehouse.tmslab.cn';` 等。如果不使用 `duckdb --init init.sql` 启动 DuckDB，您可以在 DuckDB CLI 中直接输入 `init.sql` 文件的内容，或在 Python 中使用，将达到相同效果。
 
+- 将元数据保存为SQLite格式，并使用`install sqlite`安装对应插件，可让多用户使用同一元数据文件访问湖仓。
+
 - 我们仅为普通用户授予数据的只读权限。请勿尝试修改数据。不会成功的~
 
 - 如果您更习惯使用 Python 进行数据分析而非 SQL，建议使用 Polars 而非 Pandas。以上图片中两个表的 JOIN 为例，Polars 的惰性加载特性可以节省更多内存，并提供高效查询。Pandas 则需要将整个表缓存在内存中，原始 4GB 表在查询过程中会消耗约 30GB 内存。
+
+- 在我们的实际测试中，过多的CPU核心并不会带来性能提升，反而造成了严重的性能下降。过多的CPU核心会造成不必要的数据分割与传输。3分22秒的这个最好的全库查询成绩，是跑在一台4核64G的虚拟机上的。也许使用单核会更快，但是我们没有做相应的测试。
 
 ## 许可协议
 

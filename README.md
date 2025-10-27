@@ -77,9 +77,13 @@ Such performance ensures that any PC can smoothly complete the full database que
 
 - The content in `init.sql` consists of the lakehouse access information, such as `s3_endpoint='idmlakehouse.tmslab.cn';` etc. If you do not start DuckDB using `duckdb --init init.sql`, you can directly input the contents of the `init.sql` file in the DuckDB CLI or use it in Python, which will achieve the same effect.
 
+- Save metadata in SQLite format, and install the corresponding plugin using `install sqlite`, allowing multiple users to access the lakehouse using the same metadata file.
+
 - We have only granted read permissions to the data for general users. Please do not attempt to modify the data. It won't work.
 
 - If you are more accustomed to using Python for data analysis rather than SQL, it is recommended to use Polars instead of Pandas. Taking the JOIN of the two tables in the above image as an example, the lazy loading feature of Polars can save more memory and offers high query efficiency. Pandas, on the other hand, requires caching the entire table in memory, and the original 4GB table consumes approximately 30GB of memory during the query process.
+
+- In our tests, too many CPU cores do not bring performance improvements; instead, they cause serious performance degradation. Too many CPU cores lead to unnecessary data partitioning and transmission. The best full-library query result of 3 minutes 22 seconds was achieved on a 4-core 64G virtual machine. Perhaps using a single core would be faster, but we didn't conduct the corresponding tests.
 
 ## License
 
