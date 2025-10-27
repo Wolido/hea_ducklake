@@ -18,7 +18,7 @@ The naming format for the tables in the prediction data lakehouse is `pred_x`, w
 
 ### Through DuckDB
 
-- Install DuckDB Command Line Client: Visit the following website to install the CLI program https://duckdb.org/install/?platform=macos&environment=cli
+- Install DuckDB Command Line Client: Visit the following website to install the CLI program https://duckdb.org/install
 
 - Install the ducklake plugin: Run `INSTALL ducklake;` in the DuckDB CLI
 
