@@ -58,9 +58,15 @@ Queries on the con_index column and the other three descriptors are much faster,
 
 Similar to the previous example, use descriptors to query combinations of high-entropy alloys, but this time querying the entire database. This query example is written in Rust, with the code located in the `query_whole_db` path.
 
-Querying in a public network environment is costly and limited by network speed, so we completed this query in an internal network environment. For a database containing a total of 50 billion combinations, the full database query took 13 minutes and 11 seconds.
+Querying in a public network environment is costly and limited by network speed, so we completed this query in an internal network environment. For a database containing a total of 50 billion combinations, the full database query only took 3 minutes and 22 seconds.
 
-<img src="./demo-pics/query_whole_db.png" style="height: 100px">
+<img src="./demo-pics/query_whole_db_2.png" style="height: 100px">
+
+By sacrificing some time, the full database query can run smoothly on a machine with 4G memory. We ran the program on a 4-core 4G virtual machine, resetting the database connection every 100 tables queried, and it ultimately took 7 minutes and 38 seconds.
+
+<img src="demo-pics/query_4g.png" style="height: 100px">
+
+Such performance ensures that any PC can smoothly complete the full database query.
 
 ## Additional Information
 
