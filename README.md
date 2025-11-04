@@ -85,6 +85,10 @@ Such performance ensures that any PC can smoothly complete the full database que
 
 - In our tests, too many CPU cores do not bring performance improvements; instead, they cause serious performance degradation. Too many CPU cores lead to unnecessary data partitioning and transmission. The best full-library query result of 3 minutes 22 seconds was achieved on a 4-core 64G virtual machine. Perhaps using a single core would be faster, but we didn't conduct the corresponding tests.
 
+- We have also prepared an `init-standalone.sql` file under the `descriptors` path, which allows connecting to the lakehouse without requiring local metadata. We have placed the metadata in OSS as well, and this file directly accesses the metadata file via its URL. This access method requires less than 10 seconds for loading on the first use; thanks to the caching mechanism, subsequent accesses are as fast as the local metadata file solution. This approach effectively resolves matching issues caused by metadata updates, as every rebuilt connection will load the latest metadata file.
+
+- We also tested the approach of using Postgres to store metadata. This solution performs well in terms of speed in internal network environments, but is extremely slow in public network environments. We suspect this is due to the inability to cache the data on Postgres locally.
+
 ## License
 
 <a rel="license" href="https://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a>

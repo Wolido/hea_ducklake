@@ -85,6 +85,10 @@ descriptors 路径下 `metadata.ducklake` 文件引用的数据库总共包含 5
 
 - 在我们的实际测试中，过多的CPU核心并不会带来性能提升，反而造成了严重的性能下降。过多的CPU核心会造成不必要的数据分割与传输。3分22秒的这个最好的全库查询成绩，是跑在一台4核64G的虚拟机上的。也许使用单核会更快，但是我们没有做相应的测试。
 
+- 我们还在`descriptors`路径下准备了一个`init-standalone.sql`文件，无需本地元数据即可连接湖仓。我们将元数据同样放置在了OSS里，这份文件中直接通过元数据文件的url访问。这种访问方法在初次使用的时候会需要不到10秒的加载时间，得益于缓存机制，后续的访问速度与本地元数据文件的方案一样快。此方案能够有效解决元数据更新导致的匹配问题，每次重建的连接都会加载最新的元数据文件。
+
+- 我们同样还测试了使用Postgres保存元数据的方案。这种方案在内网环境下速度良好，但是在公网环境下速度非常慢。我们猜测是由于Postgres上的数据无法在本地缓存导致的。
+
 ## 许可协议
 
 <a rel="license" href="https://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a>
