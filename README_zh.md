@@ -73,7 +73,7 @@ descriptors 路径下 `metadata.ducklake` 文件引用的数据库总共包含 5
 
 ## 其他
 
-- 本项目的真实数据使用与 S3 协议兼容的 OSS 存储。元数据类似于数据目录，可实现多用户同时访问数据。
+- 本项目的真实数据使用与 S3 协议兼容的对象存储。元数据类似于数据目录，可实现多用户同时访问数据。
 
 - `init.sql` 中的内容是湖仓访问信息，例如 `s3_endpoint='idmlakehouse.tmslab.cn';` 等。如果不使用 `duckdb --init init.sql` 启动 DuckDB，您可以在 DuckDB CLI 中直接输入 `init.sql` 文件的内容，或在 Python 中使用，将达到相同效果。
 

@@ -73,7 +73,7 @@ Such performance ensures that any PC can smoothly complete the full database que
 
 ## Additional Information
 
-- The real data for this project is stored using OSS compatible with the S3 protocol. The metadata functions similarly to a data directory, enabling multiple users to access the data simultaneously.
+- The real data for this project is stored using object storage compatible with the S3 protocol. The metadata functions similarly to a data directory, enabling multiple users to access the data simultaneously.
 
 - The content in `init.sql` consists of the lakehouse access information, such as `s3_endpoint='idmlakehouse.tmslab.cn';` etc. If you do not start DuckDB using `duckdb --init init.sql`, you can directly input the contents of the `init.sql` file in the DuckDB CLI or use it in Python, which will achieve the same effect.
 
