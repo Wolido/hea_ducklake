@@ -1,0 +1,8 @@
+services:
+  calc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+# 并行工作时，使用命令：docker compose --scale calc=50 up -d
+# 启动之前，确保redis的容器已在运行

@@ -9,10 +9,10 @@ import numpy as np
 from numpy import ndarray
 import rs_calc_faster  # type: ignore
 
-with open("./params.json", encoding="utf-8") as params:
+with open("params.json", encoding="utf-8") as params:
     params_dict: dict = json.load(params)
 
-with open("./params_4.json", encoding="utf-8") as params_4:
+with open("params_4.json", encoding="utf-8") as params_4:
     params_4_dict: dict = json.load(params_4)
 
 
