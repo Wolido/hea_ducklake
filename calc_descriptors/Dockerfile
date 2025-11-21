@@ -1,4 +1,4 @@
-FROM python:3.8-bookworm-slim
+FROM python:3.14-bookworm-slim
 
 COPY ./calc_py /root/calc_py
 WORKDIR /root/calc_py
