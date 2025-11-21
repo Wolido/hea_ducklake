@@ -71,6 +71,23 @@ By sacrificing some time, the full database query can run smoothly on a machine 
 
 Such performance ensures that any PC can smoothly complete the full database query.
 
+## Data Computation Process
+
+The code for the data computation process is located in the `calc_descriptors` directory. The computation process works by having a script submit tasks to a Redis queue, which are then picked up and processed by multiple worker processes.
+
+The core computation process is orchestrated by Python, with certain performance-critical parts implemented in Rust and exposed as Python modules via PyO3. All worker processes involved in the computation run inside Docker containers, with no use of multithreading. Each Docker container utilizes only a single CPU core. This design makes modifying the computation tasks extremely straightforward, as it completely avoids issues related to multithreading or multiprocessing.
+
+The computation process requires:
+- One task-submission container
+- One or more Redis containers
+- Multiple computation worker containers
+
+All computation containers are identical, so they can be easily scaled using `docker-compose --scale`.
+
+The computation program also includes proper signal handling for interruptions: if the program receives an interrupt signal, it will finish the current task before stopping the container gracefully.
+
+As long as the Redis container exposes its port, the computation tasks do not need to run within the same cluster/network. This architecture also supports dynamic scaling (adding or removing workers) at runtime.
+
 ## Additional Information
 
 - The real data for this project is stored using object storage compatible with the S3 protocol. The metadata functions similarly to a data directory, enabling multiple users to access the data simultaneously.
