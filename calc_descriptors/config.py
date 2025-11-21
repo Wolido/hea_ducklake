@@ -20,3 +20,6 @@ redis_port_int_1: int = int(redis_port_1)
 redis_port_int_2: int = int(redis_port_2)
 redis_port_int_3: int = int(redis_port_3)
 redis_port_int_4: int = int(redis_port_4)
+
+
+csv_dir: str = os.getenv("GSHJ_CSV_DIR", "")
