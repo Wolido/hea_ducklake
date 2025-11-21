@@ -3,6 +3,8 @@ FROM python:3.8-bookworm-slim
 COPY ./calc_py /root/calc_py
 WORKDIR /root/calc_py
 RUN pip install -r requirements.txt
+# 还需要编译一个calc_faster_rs的wheel，也使用pip安装
+
 ENV PYTHONPATH=/root
 # Redis提前配置好
 ENV GSHJ_REDIS_HOST_1=XXXX
