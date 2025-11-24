@@ -9,7 +9,7 @@ This project includes a foundational database for six principal elements high-en
 
 The data is distributed in the form of DuckLake's lakehouse. The project contains DuckLake's metadata files as well as an `init.sql` file for accessing the data lakehouse.
 
-The actual total data volume of the project is nearly 20TB. Thanks to DuckLake's lakehouse technology, you only need to download tens of megabytes of metadata to remotely access the entire database.
+The actual total data volume of the project is 17.5TB. Thanks to DuckLake's lakehouse technology, you only need to download tens of megabytes of metadata to remotely access the entire database.
 
 There are two accessible data lakehouses in the project: one is the descriptors for high-entropy alloys under the `descriptor` path, and the other is a set of ML model prediction results under the pred_demo path. Files ending with `.ducklake` are metadata files for the lakehouse.
 
