@@ -71,6 +71,22 @@ descriptors 路径下 `metadata.ducklake` 文件引用的数据库总共包含 5
 
 这样的性能确保任何 PC 都能顺利完成全数据库查询。
 
+### 边缘设备查询测试
+
+我们在4G内存的树莓派5设备上进行了数据查询测试。
+
+<img src="demo-pics/raspi5.png" style="height: 200px">
+
+因为单表过大的问题，树莓派5上查询一张整表会出现OOM问题，毕竟一张整表单是压缩后的大小已经超过了树莓派5的内存。
+
+但是其他查询均表现非常出色。例如对一张表所有字段的前100行数据进行查询，能够在10秒内完成。这是一个无法充分利用列存储特性的查询方案，表现仍非常优秀。
+
+<img src="demo-pics/raspi-100.png" style="height: 300px">
+
+在充分利用列存储特性的测试场景下，与之前相同的SQL语句`SELECT con_index, ave_fe1, rmse_ft2, range_fp5 FROM hea_6_c_128;`表现惊人，耗时仅4秒即可返回四个字段共1000万行数据的结果，我们推测这是因为树莓派的核心数更少，减少了数据争抢，且正好压在了CPU最高效运行的负载上。
+
+<img src="demo-pics/raspi-column.png" style="height: 400px">
+
 ## 数据计算过程
 
 数据计算过程的代码放置于calc_descriptors路径下。计算过程由一个脚本发送计算任务到Redis队列，由多个进程读取队列中的任务并计算。

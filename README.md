@@ -71,6 +71,22 @@ By sacrificing some time, the full database query can run smoothly on a machine 
 
 Such performance ensures that any PC can smoothly complete the full database query.
 
+### Edge Device Query Test
+
+We conducted data query tests on a Raspberry Pi 5 with 4GB of RAM.
+
+<img src="demo-pics/raspi5.png" style="height: 200px">
+
+Due to the excessively large size of individual tables, querying an entire table on the Raspberry Pi 5 triggers an OOM error. Even after compression, a single table already exceeds the available memory of the Raspberry Pi 5.
+
+However, performance on all other queries was exceptionally strong. For example, retrieving the first 100 rows of all columns from a table completes within 10 seconds. This is a query pattern that cannot fully take advantage of column-store characteristics, yet the performance remains outstanding.
+
+<img src="demo-pics/raspi-100.png" style="height: 300px">
+
+In scenarios that fully leverage column-store benefits, the same SQL statement used previously `SELECT con_index, ave_fe1, rmse_ft2, range_fp5 FROM hea_6_c_128;` delivered astonishing results: returning 10 million rows across four columns in just 4 seconds. We believe this is because the Raspberry Pi has fewer cores, which reduces data contention, and the workload perfectly matches the CPU’s most efficient operating range.
+
+<img src="demo-pics/raspi-column.png" style="height: 400px">
+
 ## Data Computation Process
 
 The code for the data computation process is located in the `calc_descriptors` directory. The computation process works by having a script submit tasks to a Redis queue, which are then picked up and processed by multiple worker processes.
