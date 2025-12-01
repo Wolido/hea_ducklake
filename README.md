@@ -124,6 +124,8 @@ As long as the Redis container exposes its port, the computation tasks do not ne
 
 - We also tested the approach of using Postgres to store metadata. This solution performs well in terms of speed in internal network environments, but is extremely slow in public network environments. We suspect this is due to the inability to cache the data on Postgres locally.
 
+- When running DuckDB on a Raspberry Pi, if you install the CLI using the official website URL, you will encounter an error when connecting to lakehouse. You need to download the linux-arm64 version from the page: https://github.com/duckdb/duckdb/releases.
+
 ## License
 
 <a rel="license" href="https://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a>

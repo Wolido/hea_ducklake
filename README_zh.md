@@ -124,6 +124,8 @@ descriptors 路径下 `metadata.ducklake` 文件引用的数据库总共包含 5
 
 - 我们同样还测试了使用Postgres保存元数据的方案。这种方案在内网环境下速度良好，但是在公网环境下速度非常慢。我们猜测是由于Postgres上的数据无法在本地缓存导致的。
 
+- 在树莓派设备上运行DuckDB时，如果使用官网url安装CLI，会在连接湖仓时报错。需要在 `https://github.com/duckdb/duckdb/releases` 页面下载linux-arm64版本。
+
 ## 许可协议
 
 <a rel="license" href="https://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a>
