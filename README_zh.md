@@ -126,6 +126,8 @@ descriptors 路径下 `metadata.ducklake` 文件引用的数据库总共包含 5
 
 - 在树莓派设备上运行DuckDB时，如果使用官网url安装CLI，会在连接湖仓时报错。需要在 `https://github.com/duckdb/duckdb/releases` 页面下载linux-arm64版本。
 
+- 重要，注意：que_push的时候，如果是用的docker，`docker-compose.yml`里**千万不要**写`restart: always`或者`restart: unless-stopped`。否则，所有任务都计算完会自动开始第二轮计算。我和我的同事在第一次开展工作的时候，都踩过这个坑😂。
+
 ## 许可协议
 
 <a rel="license" href="https://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a>
