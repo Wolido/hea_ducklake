@@ -19,6 +19,18 @@ The naming format for the tables in the prediction data lakehouse is `pred_x`, w
 
 ## Usage: Taking the metadata under the descriptors path as an example
 
+### Quick Start
+
+Click the Binder link to start running the demo: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Wolido/hea_ducklake/run_demo?urlpath=%2Fdoc%2Ftree%2Frun_demo%2Fmain.ipynb)
+
+The example contains two Jupyter Notebook files:
+- `main.ipynb`: contains some basic data query examples
+- `some_big_query.ipynb`: contains examples that take longer to execute
+
+Due to Git repository limitations that prevent uploading very large files, metadata cannot be stored in SQLite format. Additionally, the DuckLake format metadata does not support multiple concurrent connections.
+
+Therefore, when running `some_big_query.ipynb`, **please make sure to close the `main.ipynb` notebook first**, otherwise the third cell will throw an error.
+
 ### Through DuckDB
 
 - Install DuckDB Command Line Client: Visit the following website to install the CLI program https://duckdb.org/install

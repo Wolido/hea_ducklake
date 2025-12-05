@@ -19,6 +19,14 @@
 
 ## 使用方法：以 descriptors 路径下的元数据为例
 
+### 快速开始
+
+点击binder链接开始运行示例：[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Wolido/hea_ducklake/run_demo?urlpath=%2Fdoc%2Ftree%2Frun_demo%2Fmain.ipynb)
+
+示例中包含两个Jupyter Notebook文件，其中 `main.ipynb` 脚本包含一些基础的数据查询示例，`some_big_query.ipynb` 脚本包含一些查询用时更多的示例。
+
+受限于git仓库无法直接上传过大的文件，所以元数据无法使用sqlite格式，而ducklake格式的元数据不支持多个连接。所以运行`some_big_query.ipynb` 时，**请务必先关闭`main.ipynb` 脚本**，否则第三个cell会报错。
+
 ### 通过 DuckDB
 
 - 安装 DuckDB 命令行客户端：访问以下网站安装 CLI 程序 https://duckdb.org/install
