@@ -132,7 +132,9 @@ descriptors 路径下 `metadata.ducklake` 文件引用的数据库总共包含 5
 
 - 我们同样还测试了使用Postgres保存元数据的方案。这种方案在内网环境下速度良好，但是在公网环境下速度非常慢。我们猜测是由于Postgres上的数据无法在本地缓存导致的。
 
-- 在树莓派设备上运行DuckDB时，如果使用官网url安装CLI，会在连接湖仓时报错。需要在 `https://github.com/duckdb/duckdb/releases` 页面下载linux-arm64版本。
+- ~~在树莓派设备上运行DuckDB时，如果使用官网url安装CLI，会在连接湖仓时报错。需要在 `https://github.com/duckdb/duckdb/releases` 页面下载linux-arm64版本。~~
+
+- 在树莓派设备上运行已成功，现在DuckDB官网的CLI版本已正常，可以正常连接湖仓。
 
 - 重要，注意：que_push的时候，如果是用的docker，`docker-compose.yml`里**千万不要**写`restart: always`或者`restart: unless-stopped`。否则，所有任务都计算完会自动开始第二轮计算。我和我的同事在第一次开展工作的时候，都踩过这个坑😂。
 

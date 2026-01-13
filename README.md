@@ -136,7 +136,9 @@ As long as the Redis container exposes its port, the computation tasks do not ne
 
 - We also tested the approach of using Postgres to store metadata. This solution performs well in terms of speed in internal network environments, but is extremely slow in public network environments. We suspect this is due to the inability to cache the data on Postgres locally.
 
-- When running DuckDB on a Raspberry Pi, if you install the CLI using the official website URL, you will encounter an error when connecting to lakehouse. You need to download the linux-arm64 version from the page: https://github.com/duckdb/duckdb/releases.
+- ~~When running DuckDB on a Raspberry Pi, if you install the CLI using the official website URL, you will encounter an error when connecting to lakehouse. You need to download the linux-arm64 version from the page: https://github.com/duckdb/duckdb/releases.~~
+
+- The operation on the Raspberry Pi device has been successful. Now, the CLI version from DuckDB's official website is working properly, and it can connect to the lakehouse without issues.
 
 - Important: When doing `que_push.py`, if you're using Docker, **absolutely do NOT** write `restart: always` or `restart: unless-stopped` in your `docker-compose.yml`. Otherwise, after all tasks are finished, the container will automatically restart and begin a second round of computation. Both my colleague and I fell into this exact pitfall the first time we ran the job 😂.
 
