@@ -142,6 +142,10 @@ As long as the Redis container exposes its port, the computation tasks do not ne
 
 - Important: When doing `que_push.py`, if you're using Docker, **absolutely do NOT** write `restart: always` or `restart: unless-stopped` in your `docker-compose.yml`. Otherwise, after all tasks are finished, the container will automatically restart and begin a second round of computation. Both my colleague and I fell into this exact pitfall the first time we ran the job 😂.
 
+- Tried using [OpenClaw](https://openclaw.ai) to query the database, handed the project link to the Agent, and was able to successfully retrieve the data. Very convenient
+
+  <img src="demo-pics/try_openclaw.png" style="height: 300px">
+
 ## License
 
 <a rel="license" href="https://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a>

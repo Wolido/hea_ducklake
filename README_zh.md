@@ -138,6 +138,10 @@ descriptors 路径下 `metadata.ducklake` 文件引用的数据库总共包含 5
 
 - 重要，注意：que_push的时候，如果是用的docker，`docker-compose.yml`里**千万不要**写`restart: always`或者`restart: unless-stopped`。否则，所有任务都计算完会自动开始第二轮计算。我和我的同事在第一次开展工作的时候，都踩过这个坑😂。
 
+- 尝试了使用[OpenClaw](https://openclaw.ai)查询数据库，把项目的链接交给Agent，能够顺利查询到数据。真方便。
+
+  <img src="demo-pics/try_openclaw.png" style="height: 300px">
+
 ## 许可协议
 
 <a rel="license" href="https://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a>
