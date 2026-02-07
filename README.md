@@ -3,6 +3,18 @@
 - [中文](README_zh.md)
 - [English](README.md)
 
+---
+
+## 🚀 AI Agent Skill Available!
+
+**Query this database effortlessly using AI agents with our dedicated skill:**
+
+👉 **[agent-hea6-ducklake](https://github.com/Wolido/agent-hea6-ducklake)** 👈
+
+*No SQL required - just ask questions in natural language!*
+
+---
+
 # HEA DuckLake
 
 This project includes a foundational database for six principal elements high-entropy alloys, suitable for computations, ML training and predictions based on high-entropy alloys.

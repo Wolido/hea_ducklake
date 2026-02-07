@@ -3,6 +3,18 @@
 - [中文](README_zh.md)
 - [English](README.md)
 
+---
+
+## 🚀 AI Agent 技能已发布！
+
+**使用 AI Agent 通过自然语言轻松查询此数据库：**
+
+👉 **[agent-hea6-ducklake](https://github.com/Wolido/agent-hea6-ducklake)** 👈
+
+*无需编写 SQL - 直接用自然语言提问即可！*
+
+---
+
 # HEA DuckLake
 
 本项目包含一个六主元高熵合金的基础数据库，适用于高熵合金的计算、机器学习训练和预测流程。
