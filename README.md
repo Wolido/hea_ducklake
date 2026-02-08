@@ -113,7 +113,17 @@ In scenarios that fully leverage column-store benefits, the same SQL statement u
 
 ## Data Computation Process
 
-The code for the data computation process is located in the `calc_descriptors` directory. The computation process works by having a script submit tasks to a Redis queue, which are then picked up and processed by multiple worker processes.
+### 🆕 IDM-GridCore - New Generation Distributed Computing Framework
+
+We have developed a new distributed computing framework specifically for this database:
+
+👉 **[IDM-GridCore](https://github.com/Wolido/idm-gridcore)** 👈
+
+**IDM-GridCore** is a crowdfunding-style distributed parallel computing framework. Hundreds or thousands of compute nodes can participate in tasks like crowdfunding, easily achieving trillion-level data parallel computing. It features a lightweight design, heterogeneous support, and is edge-device friendly.
+
+### Legacy Computation Process
+
+The code for the legacy data computation process is located in the `calc_descriptors` directory. The computation process works by having a script submit tasks to a Redis queue, which are then picked up and processed by multiple worker processes.
 
 The core computation process is orchestrated by Python, with certain performance-critical parts implemented in Rust and exposed as Python modules via PyO3. All worker processes involved in the computation run inside Docker containers, with no use of multithreading. Each Docker container utilizes only a single CPU core. This design makes modifying the computation tasks extremely straightforward, as it completely avoids issues related to multithreading or multiprocessing.
 
