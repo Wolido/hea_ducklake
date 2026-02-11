@@ -5,13 +5,23 @@
 
 ---
 
-## 🚀 AI Agent Skill Available!
+## 🚀 AI Agent Skills Available!
 
-**Query this database effortlessly using AI agents with our dedicated skill:**
+### Query Database with Natural Language
+
+**Query this database effortlessly using AI agents:**
 
 👉 **[agent-hea6-ducklake](https://github.com/Wolido/agent-hea6-ducklake)** 👈
 
 *No SQL required - just ask questions in natural language!*
+
+### Distributed Computing Made Simple
+
+**Deploy and manage distributed computing with AI agents:**
+
+👉 **[agent-idm-gridcore](https://github.com/Wolido/agent-idm-gridcore)** 👈
+
+*Just describe your computation needs - the AI agent handles cluster deployment, task distribution, and result collection!*
 
 ---
 

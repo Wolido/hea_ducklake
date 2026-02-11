@@ -7,11 +7,21 @@
 
 ## 🚀 AI Agent 技能已发布！
 
+### 自然语言查询数据库
+
 **使用 AI Agent 通过自然语言轻松查询此数据库：**
 
 👉 **[agent-hea6-ducklake](https://github.com/Wolido/agent-hea6-ducklake)** 👈
 
 *无需编写 SQL - 直接用自然语言提问即可！*
+
+### 简化分布式计算
+
+**使用 AI Agent 轻松部署和管理分布式计算：**
+
+👉 **[agent-idm-gridcore](https://github.com/Wolido/agent-idm-gridcore)** 👈
+
+*只需描述您的计算需求 - AI Agent 将自动处理集群部署、任务分发和结果收集！*
 
 ---
 
