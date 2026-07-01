@@ -1,0 +1,155 @@
+{
+    "Fe": {
+        "index": 0,
+        "params": [
+            4.5,
+            0,
+            0,
+            0
+        ]
+    },
+    "Ni": {
+        "index": 1,
+        "params": [
+            5.15,
+            0,
+            0,
+            0
+        ]
+    },
+    "Mn": {
+        "index": 2,
+        "params": [
+            4.1,
+            0,
+            0,
+            0
+        ]
+    },
+    "Al": {
+        "index": 3,
+        "params": [
+            4.28,
+            0,
+            1,
+            5
+        ]
+    },
+    "Cr": {
+        "index": 4,
+        "params": [
+            4.5,
+            1,
+            0,
+            0
+        ]
+    },
+    "Cu": {
+        "index": 5,
+        "params": [
+            4.65,
+            1,
+            0,
+            0
+        ]
+    },
+    "Co": {
+        "index": 6,
+        "params": [
+            5,
+            0,
+            0,
+            0
+        ]
+    },
+    "Mo": {
+        "index": 7,
+        "params": [
+            4.6,
+            1,
+            0,
+            0
+        ]
+    },
+    "Ti": {
+        "index": 8,
+        "params": [
+            4.33,
+            0,
+            0,
+            0
+        ]
+    },
+    "Nb": {
+        "index": 9,
+        "params": [
+            4.3,
+            1,
+            0,
+            0
+        ]
+    },
+    "Ta": {
+        "index": 10,
+        "params": [
+            4.25,
+            0,
+            0,
+            0
+        ]
+    },
+    "W": {
+        "index": 11,
+        "params": [
+            4.55,
+            0,
+            0,
+            0
+        ]
+    },
+    "V": {
+        "index": 12,
+        "params": [
+            4.3,
+            0,
+            0,
+            0
+        ]
+    },
+    "Zr": {
+        "index": 13,
+        "params": [
+            4.05,
+            0,
+            0,
+            0
+        ]
+    },
+    "Hf": {
+        "index": 14,
+        "params": [
+            3.9,
+            0,
+            0,
+            0
+        ]
+    },
+    "Descriptors": {
+        "sfe1": {
+            "index": 42,
+            "params_name": "WEF【Atomic and electronic basis for the serrations of refractory high-entropy alloys】/ev"
+        },
+        "sfe2": {
+            "index": 43,
+            "params_name": "未填充s价电子数[2]"
+        },
+        "sfe3": {
+            "index": 44,
+            "params_name": "填充p价电子数[2]"
+        },
+        "sfe4": {
+            "index": 45,
+            "params_name": "未填充p价电子数[2]"
+        }
+    }
+}

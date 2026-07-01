@@ -1,0 +1,138 @@
+# calc_descriptors_benchmark — Testing Guide
+
+## 1. Overview of the Testing Approach
+
+This directory is refactored from `calc_descriptors`. The core objective is to upgrade **single-item serial processing** to **batch pipeline processing**, improving overall throughput and reducing Redis network RTT at the cost of increased memory consumption.
+
+Key architectural changes:
+  1. Task pulling: Changed from single-item `blpop` to `blpop` + `lpop count` batch pulling;
+  2. Result pushing: Changed from single-item `rpush` to `pipeline` batch group pushing;
+  3. Scheduling mode: Batch pull → batch compute → batch push.
+
+## 2. Core Changes in calc_py
+
+### 1. pipe.py — Message Queue Read/Write Logic
+
+**Task pulling (`get_info_from_que_large`)**
+- Uses a hybrid strategy to reduce network round trips:
+  1. `blpop` blocks and waits for the first task, avoiding idle spinning;
+  2. `lpop count` quickly fetches remaining tasks in batch, default `batch_size = 200,000`;
+- Keeps the single-item pull compatibility function `get_info_from_que()`.
+
+**Result pushing (`push_calc_data_list`)**
+- Uses Redis `pipeline` to submit batch computation results in one go;
+- Automatically groups results into `calc_data_{elem_index}` queues by `elem_index`.
+
+**Connection management**
+- Introduces `ConnectionPool` for persistent connections, configured with keepalive and health_check, to avoid frequent connection creation.
+
+### 2. que_push.py — Task Generation and Pushing Logic
+
+**Chunked pushing (`chunked_push`)**
+- The original version expands an entire group of data into a single `rpush("condata", *redis_list)` command, which is prone to blocking or timeout when the command is too large;
+- The benchmark version splits data into chunks of `batch_size = 50,000`, uses `pipeline` for batch `rpush` within each chunk, and prints progress and elapsed time in real time.
+
+**Simplified Redis instances**
+- The original version polls 4 Redis instances (r1–r4), waits until each queue is empty before writing;
+- The benchmark version uses a single Redis instance, reducing deployment complexity.
+
+**Task scope**
+- The original version loops through all element combinations (C(15,6)=5005 groups), pushing all concentration tasks for each group;
+- The benchmark version only generates and pushes tasks for the first element combination (`elem_index=0`), for controlled-scale stress testing.
+
+### 3. main.py — Computation Scheduling Logic
+
+**Batch processing mode**
+- Original version: polls 4 Redis instances, `blpop` single-item pull → single-item compute → single-item result push per iteration;
+- Benchmark version:
+  1. Calls `get_info_from_que_large()` to batch-pull tasks at once (default 200,000 items);
+  2. Computes in memory within a loop;
+  3. Calls `push_calc_data_list()` to batch-push results via pipeline.
+
+**Simplified Redis instances**
+- The original main loop rounds-robins across r1–r4 based on `PROCESS_NUM`;
+- The benchmark version removes the round-robin logic and directly loops calling `main_progress()`.
+
+## 3. Testing Procedure
+
+### Environment Preparation
+
+1. Docker containerized environment.
+2. Python >= 3.12 image and a pre-compiled `calc_faster_rs` wheel.
+3. Ensure Redis is reachable. If using your own Redis, override defaults via environment variables:
+   ```bash
+   export GSHJ_REDIS_HOST_1=<your_redis_host>
+   export GSHJ_REDIS_PORT_1=<your_redis_port>
+   export GSHJ_REDIS_PASSWORD=<your_redis_password>
+   ```
+
+### 1. Push Computation Tasks
+
+Run `que_push.py` to generate and push concentration computation tasks for the first element combination:
+
+```bash
+cd calc_py
+python que_push.py
+```
+
+Expected output (example):
+```
+2026-XX-XX XX:XX:XX - INFO - Total concentration combinations: 10,762,647
+2026-XX-XX XX:XX:XX - INFO - Starting task data generation: elem_index=0, elements=('Fe', 'Ni', 'Mn', 'Al', 'Cr', 'Cu')
+2026-XX-XX XX:XX:XX - INFO - Task data generation complete, 10,762,647 items in 30.3s
+2026-XX-XX XX:XX:XX - INFO - Pushed 50,000 / 10,762,647 items (0.5%), elapsed 0.6s
+...
+2026-XX-XX XX:XX:XX - INFO - All items pushed successfully
+```
+
+After pushing completes, the Redis queue `condata` will hold all tasks for this element combination.
+
+### 2. Run Computation
+
+Single-process run:
+
+```bash
+cd calc_py
+python main.py
+```
+
+Expected logs (`main.log` / console):
+```
+2026-XX-XX XX:XX:XX - INFO - Starting batch pull from Redis
+2026-XX-XX XX:XX:XX - INFO - Pulled 200000 tasks from Redis
+2026-XX-XX XX:XX:XX - INFO - Successfully pulled 200000 tasks
+2026-XX-XX XX:XX:XX - INFO - Computation complete, 200000 results batch-pushed to Redis
+...
+2026-XX-XX XX:XX:XX - INFO - Successfully pulled 162647 tasks
+2026-XX-XX XX:XX:XX - INFO - Computation complete, 162647 results batch-pushed to Redis
+2026-XX-XX XX:XX:XX - INFO - Starting batch pull from Redis
+2026-XX-XX XX:XX:XX - ERROR - Task pull failed: No data
+```
+
+`main.py` will keep looping until the queue is empty, then wait; it exits gracefully on receiving a `SIGTERM` signal.
+
+### 3. Multi-Process Parallelism (Optional)
+
+For multi-container parallel consumption, use Docker Compose:
+
+```bash
+cd calc_descriptors_benchmark
+docker compose up --build -d
+docker compose up --scale calc=50 -d
+```
+
+### 4. View Results
+
+Computation results are written into Redis queues `calc_data_0`, `calc_data_1`, ... by `elem_index`. View with:
+
+```bash
+redis-cli -h <host> -p <port> -a <password> llen calc_data_0
+redis-cli -h <host> -p <port> -a <password> lrange calc_data_0 0 4
+```
+
+### 5. Log File Description
+
+| Log File | Description |
+|---------|------|
+| `que_push.log` | Task generation and pushing progress |
+| `main.log` | Computation node pulling, computing, and pushing status |
