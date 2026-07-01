@@ -1,0 +1,10 @@
+services:
+  redis:
+    image: redis:7.2
+    container_name: redis-x
+    network_mode: host
+    volumes:
+      - /path/to/data:/data
+      - /path/to/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    restart: unless-stopped

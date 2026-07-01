@@ -1,0 +1,5 @@
+services:
+  calc:
+    image: xxx   # 改成你的实际镜像名
+    container_name: xxx #容器名称
+    restart: unless-stopped
