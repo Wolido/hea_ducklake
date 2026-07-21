@@ -1,0 +1,9 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Generated workflow artifacts
+results.csv
+results.parquet
+metadata.duckdb

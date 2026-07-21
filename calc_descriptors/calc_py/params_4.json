@@ -137,19 +137,19 @@
     "Descriptors": {
         "sfe1": {
             "index": 42,
-            "params_name": "WEF【Atomic and electronic basis for the serrations of refractory high-entropy alloys】/ev"
+            "params_name": "Electron work function/ev"
         },
         "sfe2": {
             "index": 43,
-            "params_name": "未填充s价电子数[2]"
+            "params_name": "Number of VECs valence electrons unfilled s valence orbitals"
         },
         "sfe3": {
             "index": 44,
-            "params_name": "填充p价电子数[2]"
+            "params_name": "Number of VECs filled p valence orbitals"
         },
         "sfe4": {
             "index": 45,
-            "params_name": "未填充p价电子数[2]"
+            "params_name": "Number of VECs valence electrons unfilled p valence orbitals"
         }
     }
 }

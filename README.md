@@ -5,178 +5,263 @@
 
 ---
 
-## 🚀 AI Agent Skills Available!
-
-### Query Database with Natural Language
-
-**Query this database effortlessly using AI agents:**
-
-👉 **[agent-hea6-ducklake](https://github.com/Wolido/agent-hea6-ducklake)** 👈
-
-*No SQL required - just ask questions in natural language!*
-
-### Distributed Computing Made Simple
-
-**Deploy and manage distributed computing with AI agents:**
-
-👉 **[agent-idm-gridcore](https://github.com/Wolido/agent-idm-gridcore)** 👈
-
-*Just describe your computation needs - the AI agent handles cluster deployment, task distribution, and result collection!*
-
----
-
-## ⚡ Distributed Computing Framework
-
-**Process massive-scale computations on this database with our distributed computing framework:**
-
-👉 **[IDM-GridCore](https://github.com/Wolido/idm-gridcore)** 👈
-
-*Crowdsourced parallel computing - any device can join!*
-
----
-
 # HEA DuckLake
 
-This project includes a foundational database for six principal elements high-entropy alloys, suitable for computations, ML training and predictions based on high-entropy alloys.
+**A lakehouse database for six-principal-element high-entropy alloys (HEAs).**
 
-The data is distributed in the form of DuckLake's lakehouse. The project contains DuckLake's metadata files as well as an `init.sql` file for accessing the data lakehouse.
+This project provides a foundational dataset and toolchain for HEA computation, machine-learning training, and property prediction. The data is distributed as a **DuckDB/DuckLake lakehouse**: you only need to download a small metadata file (tens of MB) to query a remote dataset whose total volume is **17.5 TB**.
 
-The actual total data volume of the project is 17.5TB. Thanks to DuckLake's lakehouse technology, you only need to download tens of megabytes of metadata to remotely access the entire database.
+The repository contains:
 
-There are two accessible data lakehouses in the project: one is the descriptors for high-entropy alloys under the `descriptor` path, and the other is a set of ML model prediction results under the pred_demo path. Files ending with `.ducklake` are metadata files for the lakehouse.
+- Lakehouse metadata files (`.ducklake`) and `init.sql` files for connecting to the data.
+- The `calc_descriptors` computation pipeline used to generate the descriptors.
+- A `predict_plasticity` module for ready-to-use plasticity classification.
+- `examples/minimal_workflow`, a fully reproducible laptop-scale version of the whole framework.
 
-The descriptor lakehouse contains a table of element combinations named `hea_elements_6`; a table of element composition ratios named `hea_con_6`; and an explanation table for descriptor field names named `descriptor_names`. These tables can help you better understand and use the lakehouse when querying the descriptor tables. The naming format for the descriptor data tables is `hea_6_c_x`, where `x` is the index of the element combination in the `hea_elements_6` table.
+## Table of Contents
 
-The naming format for the tables in the prediction data lakehouse is `pred_x`, where `x` is the index of the element combination in the `hea_elements_6` table of the descriptor lakehouse.
+- [Quick Start](#quick-start)
+  - [Try it online with Binder](#try-it-online-with-binder)
+  - [Reproduce it locally](#reproduce-it-locally)
+- [What is HEA DuckLake?](#what-is-hea-ducklake)
+- [Accessing the Lakehouse](#accessing-the-lakehouse)
+  - [With the DuckDB CLI](#with-the-duckdb-cli)
+  - [With Python](#with-python)
+- [Demo & Performance](#demo--performance)
+- [Data Computation Architecture](#data-computation-architecture)
+- [Minimal Reproducible Workflow](#minimal-reproducible-workflow)
+- [Plasticity Prediction](#plasticity-prediction)
+- [Notes & Tips](#notes--tips)
+- [Related Tools](#related-tools)
+- [License](#license)
 
-## Usage: Taking the metadata under the descriptors path as an example
+## Quick Start
 
-### Quick Start
+### Try it online with Binder
 
-Click the Binder link to start running the demo: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Wolido/hea_ducklake/run_demo?urlpath=%2Fdoc%2Ftree%2Frun_demo%2Fmain.ipynb)
+Click the badge below to launch the demo notebooks directly in your browser:
 
-The example contains two Jupyter Notebook files:
-- `main.ipynb`: contains some basic data query examples
-- `some_big_query.ipynb`: contains examples that take longer to execute
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Wolido/hea_ducklake/run_demo?urlpath=%2Fdoc%2Ftree%2Frun_demo%2Fmain.ipynb)
 
-Due to Git repository limitations that prevent uploading very large files, metadata cannot be stored in SQLite format. Additionally, the DuckLake format metadata does not support multiple concurrent connections.
+The demo contains two notebooks:
 
-Therefore, when running `some_big_query.ipynb`, **please make sure to close the `main.ipynb` notebook first**, otherwise the third cell will throw an error.
+- `main.ipynb` — basic query examples.
+- `some_big_query.ipynb` — heavier queries.
 
-### Through DuckDB
+> **Note:** The `.ducklake` metadata format does not support multiple concurrent connections. When running `some_big_query.ipynb`, please close `main.ipynb` first, otherwise the third cell will raise an error.
 
-- Install DuckDB Command Line Client: Visit the following website to install the CLI program https://duckdb.org/install
+### Reproduce it locally
 
-- Install the ducklake plugin: Run `INSTALL ducklake;` in the DuckDB CLI
+If you want to reproduce the integrated framework on your own machine, use `examples/minimal_workflow`. It is a laptop-scale version of the full pipeline and runs in seconds:
 
-- Run `duckdb --init init.sql` under the descriptors path to establish connection with the lakehouse
+1. **Task generation** — HEA composition tasks are pushed to a Redis queue.
+2. **Distributed computation** — Stateless Python workers compute descriptors using the same `calc_descriptors/calc_py` logic as the full pipeline.
+3. **Result collection** — Descriptor rows are gathered into a CSV file.
+4. **Lakehouse storage** — The CSV is converted to compressed Parquet and uploaded to a local MinIO instance (S3-compatible storage).
+5. **Metadata catalog** — A small DuckDB catalog records the S3 location of the Parquet object.
+6. **SQL access** — The dataset is queried through the metadata catalog without downloading the full Parquet file.
 
-- Use SQL to query data within the lakehouse
+See the detailed walkthrough in [Minimal Reproducible Workflow](#minimal-reproducible-workflow) below, or jump straight to the example code:
 
-### Through Python
+```bash
+cd examples/minimal_workflow
+pip install -r requirements.txt
+docker compose up -d
+python generate_tasks.py
+python worker.py
+python collect_results.py
+python convert_to_parquet.py
+python upload_to_minio.py
+python create_metadata.py
+python query_via_metadata.py
+```
 
-- Install the Python library duckdb: `pip install duckdb`, or use the `uv sync` command to sync dependencies. The project includes `pyproject.toml` and `uv.lock` files.
+## What is HEA DuckLake?
 
-- Subsequent operation steps refer to the `use_descriptors.py` script.
+The project exposes two lakehouses:
 
-## Demo
+- **`descriptor/`** — Descriptors for six-principal-element high-entropy alloys.
+- **`pred_demo/`** — Machine-learning prediction results.
 
-The database referenced by the `metadata.ducklake` file under the descriptors path contains a total of 5008 tables, of which 5005 are descriptors for six principal elements high-entropy alloys. Each table has 195 columns and over 10 million rows, stored in a compressed columnar format, requiring approximately more than 4GB of space. However, most queries do not require the full dataset, so query results can be returned very quickly. The following are two examples, both using SQL operations.
+Files ending with `.ducklake` are metadata files. The descriptor lakehouse contains:
 
-### Query of the  element components of six principal elements high-entropy alloys using descriptors
+| Table | Purpose |
+|---|---|
+| `hea_elements_6` | Element combinations |
+| `hea_con_6` | Element composition ratios |
+| `descriptor_names` | Explanation of descriptor column names |
+| `hea_6_c_x` | Descriptor data for combination index `x` in `hea_elements_6` |
 
-In a single city, queries on the public network can return results in as fast as 2 seconds. If there have been prior queries about this table, caching could make the query speed even faster. Previously, cross-city query speeds were around 4 seconds. In scenarios like cross-country or cross-continent, the speed might be a bit slower, but still fast enough.
+The prediction lakehouse stores tables named `pred_x`, where `x` maps to the same combination index in `hea_elements_6`.
+
+## Accessing the Lakehouse
+
+### With the DuckDB CLI
+
+1. Install the DuckDB CLI from [https://duckdb.org/install](https://duckdb.org/install).
+2. Install the DuckLake plugin: `INSTALL ducklake;`
+3. In the `descriptor/` directory run:
+
+   ```bash
+   duckdb --init init.sql
+   ```
+
+4. Query the lakehouse with SQL.
+
+### With Python
+
+```bash
+pip install duckdb
+# or use the provided pyproject.toml / uv.lock:
+# uv sync
+```
+
+Then follow the steps in `use_descriptors.py`.
+
+## Demo & Performance
+
+The `metadata.ducklake` file under `descriptor/` references **5008 tables**, of which **5005** are six-principal-element HEA descriptor tables. Each table has **195 columns** and more than **10 million rows**, stored in compressed columnar format and requiring ~4 GB if fully materialized.
+
+### Querying element compositions
+
+On a public network, queries can return in as little as **2 seconds** within the same city. Cross-city queries are typically around **4 seconds**; cross-continent queries are slower but still practical.
 
 <img src="./demo-pics/qc.png" style="height: 200px" />
 
-### Query on certain columns in the data table
+### Querying selected columns
 
-Thanks to column storage technology, non-full-table queries do not require transmitting all data over the network. Full table queries on the descriptor table take on the order of minutes, depending on network conditions; we have measured speeds such as 2 minutes and 7 minutes.
-
-Queries on the con_index column and the other three descriptors are much faster, taking about 10 seconds, with most of the time spent transmitting the 10 million × 4 data back over the network.
+Columnar storage avoids full-table transfers. A projection such as `SELECT con_index, ave_fe1, rmse_ft2, range_fp5 FROM hea_6_c_128;` returns 10 million rows across four columns in about **10 seconds**.
 
 <img src="./demo-pics/qd1.png" style="height: 200px" />
 
-...
-
 <img src="./demo-pics/qd2.png" style="height: 200px">
 
-### Full database query
+### Full-database query
 
-Similar to the previous example, use descriptors to query combinations of high-entropy alloys, but this time querying the entire database. This query example is written in Rust, with the code located in the `query_whole_db` path.
-
-Querying in a public network environment is costly and limited by network speed, so we completed this query in an internal network environment. For a database containing a total of 50 billion combinations, the full database query only took 3 minutes and 22 seconds.
+The `query_whole_db/` directory contains a Rust implementation that queries the entire database. In an internal network, a database of **50 billion combinations** was queried in **3 minutes 22 seconds** on a 4-core, 64 GB VM.
 
 <img src="./demo-pics/query_whole_db_2.png" style="height: 100px">
 
-By sacrificing some time, the full database query can run smoothly on a machine with 4G memory. We ran the program on a 4-core 4G virtual machine, resetting the database connection every 100 tables queried, and it ultimately took 7 minutes and 38 seconds.
+The same workload completed in **7 minutes 38 seconds** on a 4-core, 4 GB VM, resetting the DuckDB connection every 100 tables. This shows that the full database query can run comfortably on modest hardware.
 
 <img src="demo-pics/query_4g.png" style="height: 100px">
 
-Such performance ensures that any PC can smoothly complete the full database query.
+### Edge-device query test
 
-### Edge Device Query Test
-
-We conducted data query tests on a Raspberry Pi 5 with 4GB of RAM.
+We also tested queries on a **Raspberry Pi 5 with 4 GB RAM**:
 
 <img src="demo-pics/raspi5.png" style="height: 200px">
 
-Due to the excessively large size of individual tables, querying an entire table on the Raspberry Pi 5 triggers an OOM error. Even after compression, a single table already exceeds the available memory of the Raspberry Pi 5.
-
-However, performance on all other queries was exceptionally strong. For example, retrieving the first 100 rows of all columns from a table completes within 10 seconds. This is a query pattern that cannot fully take advantage of column-store characteristics, yet the performance remains outstanding.
+- Querying an entire single table triggers an OOM error because the compressed table already exceeds the device memory.
+- `SELECT * FROM hea_6_c_xxx LIMIT 100` finishes within **10 seconds**.
+- The columnar projection above (`con_index` + three descriptors) returns **10 million rows in 4 seconds**.
 
 <img src="demo-pics/raspi-100.png" style="height: 300px">
 
-In scenarios that fully leverage column-store benefits, the same SQL statement used previously `SELECT con_index, ave_fe1, rmse_ft2, range_fp5 FROM hea_6_c_128;` delivered astonishing results: returning 10 million rows across four columns in just 4 seconds. We believe this is because the Raspberry Pi has fewer cores, which reduces data contention, and the workload perfectly matches the CPU’s most efficient operating range.
-
 <img src="demo-pics/raspi-column.png" style="height: 400px">
 
-## Data Computation Process
+## Data Computation Architecture
 
-The code for the data computation process is located in the `calc_descriptors` directory. The computation process works by having a script submit tasks to a Redis queue, which are then picked up and processed by multiple worker processes.
+The descriptor computation pipeline lives in `calc_descriptors/`:
 
-The core computation process is orchestrated by Python, with certain performance-critical parts implemented in Rust and exposed as Python modules via PyO3. All worker processes involved in the computation run inside Docker containers, with no use of multithreading. Each Docker container utilizes only a single CPU core. This design makes modifying the computation tasks extremely straightforward, as it completely avoids issues related to multithreading or multiprocessing.
+- A Python orchestrator submits tasks to a Redis queue.
+- Multiple stateless workers pop tasks and compute descriptors.
+- Performance-critical paths are implemented in Rust and exposed to Python via PyO3 (`rs_calc_faster`).
+- Each worker runs in its own Docker container and uses a single CPU core, so scaling is as simple as `docker compose --scale`.
+- Workers handle `SIGINT` gracefully: they finish the current task before exiting.
 
-The computation process requires:
-- One task-submission container
-- One or more Redis containers
-- Multiple computation worker containers
+Because the Redis port is exposed, workers can run anywhere — on servers, workstations, or edge devices — and can join or leave the cluster dynamically. For production-scale crowdsourced computing, see [IDM-GridCore](https://github.com/Wolido/idm-gridcore).
 
-All computation containers are identical, so they can be easily scaled using `docker-compose --scale`.
+## Minimal Reproducible Workflow
 
-The computation program also includes proper signal handling for interruptions: if the program receives an interrupt signal, it will finish the current task before stopping the container gracefully.
+`examples/minimal_workflow` is a self-contained, laptop-scale reproduction of the framework shown in the paper. It uses only the first 6-element family and computes a small number of compositions, so it completes in seconds.
 
-As long as the Redis container exposes its port, the computation tasks do not need to run within the same cluster/network. This architecture also supports dynamic scaling (adding or removing workers) at runtime.
+### What it demonstrates
 
-## Additional Information
+1. **Stateless parallel computation** — tasks are pushed to Redis and processed by identical Python workers.
+2. **Descriptor computation** — each worker calls `calc_main_progress()` from `calc_descriptors/calc_py`.
+3. **Result collection** — descriptor rows are written to `results.csv`.
+4. **Lakehouse storage** — the CSV is converted to a compressed Parquet file and uploaded to MinIO.
+5. **Metadata catalog** — a DuckDB catalog records the S3 location of the Parquet object.
+6. **SQL access** — the dataset is queried through the catalog without downloading the full object.
 
-- The real data for this project is stored using object storage compatible with the S3 protocol. The metadata functions similarly to a data directory, enabling multiple users to access the data simultaneously.
+### Prerequisites
 
-- The content in `init.sql` consists of the lakehouse access information, such as `s3_endpoint='idmlakehouse.tmslab.cn';` etc. If you do not start DuckDB using `duckdb --init init.sql`, you can directly input the contents of the `init.sql` file in the DuckDB CLI or use it in Python, which will achieve the same effect.
+- Python 3.10+
+- Rust toolchain and `maturin`
+- Docker / Docker Compose (or Homebrew MinIO as a fallback)
+- Python packages listed in `examples/minimal_workflow/requirements.txt`
 
-- Save metadata in SQLite format, and install the corresponding plugin using `install sqlite`, allowing multiple users to access the lakehouse using the same metadata file.
+### Step-by-step
 
-- We have only granted read permissions to the data for general users. Please do not attempt to modify the data. It won't work.
+```bash
+# 1. Compile the Rust extension
+cd calc_descriptors/calc_faster_rs
+maturin develop --release
 
-- If you are more accustomed to using Python for data analysis rather than SQL, it is recommended to use Polars instead of Pandas. Taking the JOIN of the two tables in the above image as an example, the lazy loading feature of Polars can save more memory and offers high query efficiency. Pandas, on the other hand, requires caching the entire table in memory, and the original 4GB table consumes approximately 30GB of memory during the query process.
+# 2. Install the example dependencies
+cd ../../examples/minimal_workflow
+pip install -r requirements.txt
 
-- In our tests, too many CPU cores do not bring performance improvements; instead, they cause serious performance degradation. Too many CPU cores lead to unnecessary data partitioning and transmission. The best full-library query result of 3 minutes 22 seconds was achieved on a 4-core 64G virtual machine. ~~Perhaps using a single core would be faster, but we didn't conduct the corresponding tests.~~
+# 3. Start Redis and MinIO
+docker compose up -d
 
-- We've already done the testing — single-core is not faster at all. In the end, the query load on a single core just becomes too heavy. 4–8 cores is the sweet spot for maximum speed. We got incredibly lucky: we landed on the absolute fastest configuration right from the very first try. One more thing I'd like to add: if the data were stored on a flash array and queried with an ultra-high-clock CPU (like on a top-spec Mac), the time would definitely drop well below the current 3:22 record!
+# 4. Generate tasks and run a worker
+python generate_tasks.py
+python worker.py
 
-- We have also prepared an `init-standalone.sql` file under the `descriptors` path, which allows connecting to the lakehouse without requiring local metadata. We have placed the metadata in OSS as well, and this file directly accesses the metadata file via its URL. This access method requires less than 10 seconds for loading on the first use; thanks to the caching mechanism, subsequent accesses are as fast as the local metadata file solution. This approach effectively resolves matching issues caused by metadata updates, as every rebuilt connection will load the latest metadata file.
+# 5. Collect results and convert to Parquet
+python collect_results.py
+python convert_to_parquet.py
 
-- We also tested the approach of using Postgres to store metadata. This solution performs well in terms of speed in internal network environments, but is extremely slow in public network environments. We suspect this is due to the inability to cache the data on Postgres locally.
+# 6. Optional: query the local Parquet directly
+python query_parquet.py
 
-- ~~When running DuckDB on a Raspberry Pi, if you install the CLI using the official website URL, you will encounter an error when connecting to lakehouse. You need to download the linux-arm64 version from the page: https://github.com/duckdb/duckdb/releases.~~
+# 7. Upload to MinIO and create the metadata catalog
+python upload_to_minio.py
+python create_metadata.py
 
-- The operation on the Raspberry Pi device has been successful. Now, the CLI version from DuckDB's official website is working properly, and it can connect to the lakehouse without issues.
+# 8. Query through the metadata catalog
+python query_via_metadata.py
+```
 
-- Important: When doing `que_push.py`, if you're using Docker, **absolutely do NOT** write `restart: always` or `restart: unless-stopped` in your `docker-compose.yml`. Otherwise, after all tasks are finished, the container will automatically restart and begin a second round of computation. Both my colleague and I fell into this exact pitfall the first time we ran the job 😂.
+The example supports environment variables for all endpoints, queue names, and credentials. See `examples/minimal_workflow/README.md` for the full list and troubleshooting tips (including how to run MinIO via Homebrew if Docker Hub is unreachable).
 
-- Tried using [OpenClaw](https://openclaw.ai) to query the database, handed the project link to the Agent, and was able to successfully retrieve the data. Very convenient
+## Plasticity Prediction
+
+The `predict_plasticity/` directory contains a ready-to-use plasticity classification module:
+
+- `model_files/model.onnx` — trained classification model.
+- `model_files/minmax_params.pkl` — Min-Max normalization parameters.
+- `model_files/feature_names.json` — required descriptor columns.
+
+The module reads descriptor parquet files (e.g. `hea_6_c_*.parquet`), applies Min-Max normalization, runs ONNX inference, and writes prediction parquet files. See `predict_plasticity/README.md` for details.
+
+## Notes & Tips
+
+- The real data is stored in S3-compatible object storage. The metadata acts like a data directory, allowing multiple users to access the same dataset concurrently.
+- `init.sql` contains the lakehouse access configuration (e.g. `s3_endpoint='idmlakehouse.tmslab.cn';`). You can also paste its contents into the DuckDB CLI or use it from Python.
+- If you store metadata in SQLite format and run `INSTALL sqlite`, multiple users can share the same metadata file.
+- General users have **read-only** access. Attempts to modify the data will not succeed.
+- For Python analysis we recommend **Polars** over Pandas. In the JOIN example shown above, Polars' lazy loading saves memory and is much faster. Pandas must cache the entire table in memory; a 4 GB compressed table can consume ~30 GB during the query.
+- CPU core count matters. In our tests, 4–8 cores is the sweet spot; more cores cause unnecessary data partitioning and slower queries. The 3:22 full-database record was achieved on a 4-core, 64 GB VM.
+- An `init-standalone.sql` is provided under `descriptor/`. It reads the metadata file directly from OSS, so no local metadata is needed. The first connection takes <10 seconds; subsequent connections are cached and as fast as local metadata. This avoids version-mismatch issues when metadata is rebuilt.
+- We also tested Postgres-backed metadata. It performs well on internal networks but is very slow over the public internet, likely because Postgres data cannot be cached locally.
+- When running `que_push.py` inside Docker, **do not** set `restart: always` or `restart: unless-stopped` in `docker-compose.yml`. After all tasks finish, the container will restart and begin a second round of computation. Both my colleague and I fell into this pitfall the first time 😂.
+- We successfully queried the database with [OpenClaw](https://openclaw.ai) by handing the project link to the agent.
 
   <img src="demo-pics/try_openclaw.png" style="height: 300px">
+
+## Related Tools
+
+### AI Agent Skills
+
+- **Natural-language database queries:** [agent-hea6-ducklake](https://github.com/Wolido/agent-hea6-ducklake)
+- **Distributed computing deployment:** [agent-idm-gridcore](https://github.com/Wolido/agent-idm-gridcore)
+
+### Distributed Computing Framework
+
+- **[IDM-GridCore](https://github.com/Wolido/idm-gridcore)** — crowdsourced parallel computing for massive-scale descriptor generation.
 
 ## License
 

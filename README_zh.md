@@ -5,174 +5,263 @@
 
 ---
 
-## 🚀 AI Agent 技能已发布！
-
-### 自然语言查询数据库
-
-**使用 AI Agent 通过自然语言轻松查询此数据库：**
-
-👉 **[agent-hea6-ducklake](https://github.com/Wolido/agent-hea6-ducklake)** 👈
-
-*无需编写 SQL - 直接用自然语言提问即可！*
-
-### 简化分布式计算
-
-**使用 AI Agent 轻松部署和管理分布式计算：**
-
-👉 **[agent-idm-gridcore](https://github.com/Wolido/agent-idm-gridcore)** 👈
-
-*只需描述您的计算需求 - AI Agent 将自动处理集群部署、任务分发和结果收集！*
-
----
-
-## ⚡ 分布式计算框架
-
-**使用我们的分布式计算框架对此数据库进行大规模计算：**
-
-👉 **[IDM-GridCore](https://github.com/Wolido/idm-gridcore)** 👈
-
-*众筹式并行计算 - 任何设备都可以参与！*
-
----
-
 # HEA DuckLake
 
-本项目包含一个六主元高熵合金的基础数据库，适用于高熵合金的计算、机器学习训练和预测流程。
+**六主元高熵合金（HEA）湖仓数据库。**
 
-数据以 DuckLake 的湖仓形式分发。该项目包含 DuckLake 的元数据文件以及用于访问数据湖仓的 `init.sql` 文件。
+本项目提供面向高熵合金计算、机器学习训练与性能预测的基础数据集与工具链。数据以 **DuckDB/DuckLake 湖仓** 形式分发：整个数据集的实际总量为 **17.5 TB**，但您只需下载数十 MB 的元数据文件即可远程访问全部数据。
 
-本项目的实际总数据量17.5TB。得益于 DuckLake 的湖仓技术，只需下载数十 MB 的元数据，即可远程访问整个数据库。
+仓库内容包含：
 
-项目中有两个可访问的数据湖仓：一个是位于 `descriptor` 路径下的高熵合金描述符，另一个是位于 `pred_demo` 路径下的机器学习模型预测结果集。以 `.ducklake` 结尾的文件是湖仓的元数据文件。
+- 湖仓元数据文件（`.ducklake`）及用于连接湖仓的 `init.sql` 文件。
+- 用于生成描述符的 `calc_descriptors` 计算流程。
+- 即开即用的 `predict_plasticity` 塑性分类预测模块。
+- 完整可复现的笔记本级最小示例 `examples/minimal_workflow`。
 
-描述符湖仓包含一个名为 `hea_elements_6` 的元素组合表；一个名为 `hea_con_6` 的元素组成比例表；以及一个名为 `descriptor_names` 的描述符字段名称解释表。这些表可以帮助您在查询描述符表时更好地理解和使用湖仓。描述符数据表的命名格式为 `hea_6_c_x`，其中 `x` 是 `hea_elements_6` 表中元素组合的索引。
+## 目录
 
-预测数据湖仓中的表的命名格式为 `pred_x`，其中 `x` 是描述符湖仓中 `hea_elements_6` 表的元素组合索引。
+- [快速开始](#快速开始)
+  - [在线体验（Binder）](#在线体验binder)
+  - [本地复现](#本地复现)
+- [什么是 HEA DuckLake？](#什么是-hea-ducklake)
+- [访问湖仓](#访问湖仓)
+  - [通过 DuckDB CLI](#通过-duckdb-cli)
+  - [通过 Python](#通过-python)
+- [示例与性能](#示例与性能)
+- [数据计算架构](#数据计算架构)
+- [最小可复现工作流](#最小可复现工作流)
+- [塑性预测](#塑性预测)
+- [注意事项](#注意事项)
+- [相关工具](#相关工具)
+- [许可协议](#许可协议)
 
-## 使用方法：以 descriptors 路径下的元数据为例
+## 快速开始
 
-### 快速开始
+### 在线体验（Binder）
 
-点击binder链接开始运行示例：[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Wolido/hea_ducklake/run_demo?urlpath=%2Fdoc%2Ftree%2Frun_demo%2Fmain.ipynb)
+点击下方徽章即可在浏览器中直接运行示例 Notebook：
 
-示例中包含两个Jupyter Notebook文件，其中 `main.ipynb` 脚本包含一些基础的数据查询示例，`some_big_query.ipynb` 脚本包含一些查询用时更多的示例。
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Wolido/hea_ducklake/run_demo?urlpath=%2Fdoc%2Ftree%2Frun_demo%2Fmain.ipynb)
 
-受限于git仓库无法直接上传过大的文件，所以元数据无法使用sqlite格式，而ducklake格式的元数据不支持多个连接。所以运行`some_big_query.ipynb` 时，**请务必先关闭`main.ipynb` 脚本**，否则第三个cell会报错。
+示例包含两个 Notebook：
 
-### 通过 DuckDB
+- `main.ipynb` — 基础查询示例。
+- `some_big_query.ipynb` — 耗时更长的查询示例。
 
-- 安装 DuckDB 命令行客户端：访问以下网站安装 CLI 程序 https://duckdb.org/install
+> **注意：** `.ducklake` 格式的元数据不支持多个连接同时访问。运行 `some_big_query.ipynb` 前，请先关闭 `main.ipynb`，否则第三个单元格会报错。
 
-- 安装 ducklake 插件：在 DuckDB CLI 中运行 `INSTALL ducklake;`
+### 本地复现
 
-- 在 descriptors 路径下运行 `duckdb --init init.sql` 以建立与湖仓的连接
+如果您想在自己的机器上复现整个集成框架，请使用 `examples/minimal_workflow`。这是完整流程的笔记本规模版本，几秒钟即可跑完：
 
-- 使用 SQL 查询湖仓中的数据
+1. **任务生成** — 将 HEA 组成任务推入 Redis 队列。
+2. **分布式计算** — 无状态 Python 工作进程使用与完整流程相同的 `calc_descriptors/calc_py` 逻辑计算描述符。
+3. **结果收集** — 将描述符汇总为 CSV 文件。
+4. **湖仓存储** — 将 CSV 转换为压缩 Parquet 并上传至本地 MinIO（S3 兼容对象存储）。
+5. **元数据目录** — 用一个小型 DuckDB 目录记录 Parquet 文件的 S3 位置。
+6. **SQL 访问** — 通过元数据目录查询数据集，无需下载完整 Parquet 文件。
+
+详细的步骤说明见下文 [最小可复现工作流](#最小可复现工作流)，或直接进入示例代码：
+
+```bash
+cd examples/minimal_workflow
+pip install -r requirements.txt
+docker compose up -d
+python generate_tasks.py
+python worker.py
+python collect_results.py
+python convert_to_parquet.py
+python upload_to_minio.py
+python create_metadata.py
+python query_via_metadata.py
+```
+
+## 什么是 HEA DuckLake？
+
+本项目开放两个湖仓：
+
+- **`descriptor/`** — 六主元高熵合金描述符。
+- **`pred_demo/`** — 机器学习预测结果。
+
+以 `.ducklake` 结尾的文件为元数据文件。描述符湖仓包含：
+
+| 表名 | 说明 |
+|---|---|
+| `hea_elements_6` | 元素组合表 |
+| `hea_con_6` | 元素组成比例表 |
+| `descriptor_names` | 描述符字段名称解释表 |
+| `hea_6_c_x` | `hea_elements_6` 中索引为 `x` 的元素组合对应的描述符数据表 |
+
+预测湖仓中的表名为 `pred_x`，其中 `x` 与描述符湖仓 `hea_elements_6` 中的组合索引对应。
+
+## 访问湖仓
+
+### 通过 DuckDB CLI
+
+1. 从 [https://duckdb.org/install](https://duckdb.org/install) 安装 DuckDB 命令行客户端。
+2. 安装 DuckLake 插件：`INSTALL ducklake;`
+3. 在 `descriptor/` 目录下执行：
+
+   ```bash
+   duckdb --init init.sql
+   ```
+
+4. 使用 SQL 查询湖仓数据。
 
 ### 通过 Python
 
-- 安装 Python 库 duckdb：`pip install duckdb`，或使用 `uv sync` 命令同步依赖。该项目包含 `pyproject.toml` 和 `uv.lock` 文件。
+```bash
+pip install duckdb
+# 或使用项目提供的 pyproject.toml / uv.lock：
+# uv sync
+```
 
-- 后续操作步骤请参考 `use_descriptors.py` 脚本。
+后续操作请参考 `use_descriptors.py` 脚本。
 
-## 示例演示
+## 示例与性能
 
-descriptors 路径下 `metadata.ducklake` 文件引用的数据库总共包含 5008 张表，其中 5005 张是六元高熵合金的描述符。每张表有 195 列和超过 1000 万行数据，以压缩的列存储格式存储，需要大约 4GB 以上的空间。然而，大多数查询不需要完整数据集，因此查询结果可以非常快速地返回。以下是两个示例，均使用 SQL 操作。
+`descriptor/` 路径下的 `metadata.ducklake` 文件共引用 **5008 张表**，其中 **5005 张** 为六主元高熵合金描述符表。每张表有 **195 列**、超过 **1000 万行**，以压缩列存储格式保存，完整物化约需 4 GB 空间。
 
-### 使用描述符查询六主元高熵合金的元素成分
+### 查询元素成分
 
-在同一城市内，公网查询可在 2 秒内返回结果。如果之前已查询过此表，缓存机制可使查询速度更快。曾试过跨城市的查询速度约为 4 秒。在跨国或跨洲场景下，速度可能稍慢，但仍足够快了。
+在公网同城市环境下，查询可在 **2 秒内** 返回；跨城市约 **4 秒**；跨国或跨洲会更慢，但仍可接受。
 
 <img src="./demo-pics/qc.png" style="height: 200px" />
 
-### 数据表中某些列的查询
+### 查询部分列
 
-得益于列存储技术，非全表查询无需传输所有数据。全表查询描述符表需要几分钟时间，具体取决于网络条件；我们测得了 2 分钟和 7 分钟的速度。
-
-只对 con_index 列和其他三个描述符的查询要快得多，大约 10 秒，其中大部分时间消耗在了传输 1000 万 × 4 的数据。
+得益于列存储，非全表查询无需传输全部数据。例如 `SELECT con_index, ave_fe1, rmse_ft2, range_fp5 FROM hea_6_c_128;` 返回 1000 万行 × 4 列数据，耗时约 **10 秒**。
 
 <img src="./demo-pics/qd1.png" style="height: 200px" />
 
-...
-
 <img src="./demo-pics/qd2.png" style="height: 200px">
 
-### 全数据库查询
+### 全库查询
 
-类似于之前的示例，使用描述符查询高熵合金组合，但这次查询整个数据库。此查询示例使用 Rust 编写，代码位于 `query_whole_db` 路径。
-
-在公网环境中查询成本高且受网络速度限制，因此我们在内网环境中完成了此查询。对于总共包含 500 亿组合的数据库，全数据库查询仅用了 3 分 22 秒。
+`query_whole_db/` 目录下提供了用 Rust 实现的全库查询示例。在内网环境中，对总共 **500 亿组合** 的数据库全库查询仅需 **3 分 22 秒**（4 核 64 GB 虚拟机）。
 
 <img src="./demo-pics/query_whole_db_2.png" style="height: 100px">
 
-通过牺牲一些时间，全数据库查询可在 4G 内存的机器上顺利运行。我们在 4 核 4G 虚拟机上运行程序，每查询 100 个表重置一次数据库连接，最终用了 7 分 38 秒。
+相同负载在 4 核 4 GB 虚拟机上每查询 100 个表重置一次连接，最终耗时 **7 分 38 秒**，说明全库查询可以在普通配置的机器上顺利完成。
 
 <img src="demo-pics/query_4g.png" style="height: 100px">
 
-这样的性能确保任何 PC 都能顺利完成全数据库查询。
-
 ### 边缘设备查询测试
 
-我们在4G内存的树莓派5设备上进行了数据查询测试。
+我们还在 **4 GB 内存的树莓派 5** 上进行了查询测试：
 
 <img src="demo-pics/raspi5.png" style="height: 200px">
 
-因为单表过大的问题，树莓派5上查询一张整表会出现OOM问题，毕竟一张整表单是压缩后的大小已经超过了树莓派5的内存。
-
-但是其他查询均表现非常出色。例如对一张表所有字段的前100行数据进行查询，能够在10秒内完成。这是一个无法充分利用列存储特性的查询方案，表现仍非常优秀。
+- 单表整表查询会触发 OOM，因为压缩后的单表大小已超过树莓派内存。
+- `SELECT * FROM hea_6_c_xxx LIMIT 100` 可在 **10 秒内** 完成。
+- 上述列投影查询（4 列 1000 万行）仅需 **4 秒**。
 
 <img src="demo-pics/raspi-100.png" style="height: 300px">
 
-在充分利用列存储特性的测试场景下，与之前相同的SQL语句`SELECT con_index, ave_fe1, rmse_ft2, range_fp5 FROM hea_6_c_128;`表现惊人，耗时仅4秒即可返回四个字段共1000万行数据的结果，我们推测这是因为树莓派的核心数更少，减少了数据争抢，且正好压在了CPU最高效运行的负载上。
-
 <img src="demo-pics/raspi-column.png" style="height: 400px">
 
-## 数据计算过程
+## 数据计算架构
 
-数据计算过程的代码放置于calc_descriptors路径下。计算过程由一个脚本发送计算任务到Redis队列，由多个进程读取队列中的任务并计算。
+描述符计算流程位于 `calc_descriptors/` 目录下：
 
-核心计算过程由Python调度，部分代码使用PyO3将Rust代码封装为Python模块使用。所有参与计算的线程都使用docker运行，没有使用多线程，每个docker只使用一个核心。所以计算任务的改写非常容易，可以完全规避多线程或多进程的问题。
+- Python 负责调度，将任务提交到 Redis 队列。
+- 多个无状态工作进程从队列取任务并计算。
+- 性能关键部分使用 Rust 实现，并通过 PyO3 封装为 Python 模块 `rs_calc_faster`。
+- 每个工作进程在独立 Docker 容器中运行，且只使用一个 CPU 核心，因此扩容只需 `docker compose --scale`。
+- 工作进程对中断信号做了处理：收到 `SIGINT` 后会先完成当前任务再退出。
 
-计算过程需要
-- 一个任务发送容器
-- 一个或多个Redis容器
-- 多个计算容器
+由于 Redis 端口可暴露到外部，工作进程可以运行在任何地方（服务器、工作站、边缘设备），并支持运行时动态加入或离开集群。对于生产级的大规模众包计算，请参考 [IDM-GridCore](https://github.com/Wolido/idm-gridcore)。
 
-每个计算容器都完全相同，所以启动时使用`docker-compose --scale`即可。
+## 最小可复现工作流
 
-计算程序中还有中断信号的处理，如果程序被中断，会完成最后一个计算任务再停止容器。
+`examples/minimal_workflow` 是论文中集成框架的自包含、笔记本规模复现。它只使用第一个 6 元素家族并计算少量成分，几秒钟内即可完成。
 
-如果Redis容器能够将端口暴露出来，计算任务并非需要在同一个集群内运行。同时这套方案还支持动态的扩容和缩容。
+### 它展示了什么
 
-## 其他
+1. **无状态并行计算** — 任务被推入 Redis，由相同的工作进程处理。
+2. **描述符计算** — 每个工作进程调用 `calc_descriptors/calc_py` 中的 `calc_main_progress()`。
+3. **结果收集** — 描述符行被写入 `results.csv`。
+4. **湖仓存储** — CSV 被转换为压缩 Parquet 并上传至 MinIO。
+5. **元数据目录** — DuckDB 目录记录 Parquet 文件的 S3 位置。
+6. **SQL 访问** — 通过目录查询数据集，无需下载完整对象。
 
-- 本项目的真实数据使用与 S3 协议兼容的对象存储。元数据类似于数据目录，可实现多用户同时访问数据。
+### 前置要求
 
-- `init.sql` 中的内容是湖仓访问信息，例如 `s3_endpoint='idmlakehouse.tmslab.cn';` 等。如果不使用 `duckdb --init init.sql` 启动 DuckDB，您可以在 DuckDB CLI 中直接输入 `init.sql` 文件的内容，或在 Python 中使用，将达到相同效果。
+- Python 3.10+
+- Rust 工具链及 `maturin`
+- Docker / Docker Compose（或作为后备方案的 Homebrew MinIO）
+- `examples/minimal_workflow/requirements.txt` 中列出的 Python 包
 
-- 将元数据保存为SQLite格式，并使用`install sqlite`安装对应插件，可让多用户使用同一元数据文件访问湖仓。
+### 分步运行
 
-- 我们仅为普通用户授予数据的只读权限。请勿尝试修改数据。不会成功的~
+```bash
+# 1. 编译 Rust 扩展
+cd calc_descriptors/calc_faster_rs
+maturin develop --release
 
-- 如果您更习惯使用 Python 进行数据分析而非 SQL，建议使用 Polars 而非 Pandas。以上图片中两个表的 JOIN 为例，Polars 的惰性加载特性可以节省更多内存，并提供高效查询。Pandas 则需要将整个表缓存在内存中，原始 4GB 表在查询过程中会消耗约 30GB 内存。
+# 2. 安装示例依赖
+cd ../../examples/minimal_workflow
+pip install -r requirements.txt
 
-- 在我们的实际测试中，过多的CPU核心并不会带来性能提升，反而造成了严重的性能下降。过多的CPU核心会造成不必要的数据分割与传输。3分22秒的这个最好的全库查询成绩，是跑在一台4核64G的虚拟机上的。~~也许使用单核会更快，但是我们没有做相应的测试。~~
+# 3. 启动 Redis 和 MinIO
+docker compose up -d
 
-- 我们做过测试了，单核并不会更快，最终单核的查询负载太高了。实际测下来，4~8核是速度最快的，我们运气真的很好，一上来就碰到了最快的方案。另外还想说一下，如果能用闪存阵列存储数据，用超高主频的CPU查询，比如一台Mac，速度绝对会超过3分22秒这个成绩！
+# 4. 生成任务并运行工作进程
+python generate_tasks.py
+python worker.py
 
-- 我们还在`descriptors`路径下准备了一个`init-standalone.sql`文件，无需本地元数据即可连接湖仓。我们将元数据同样放置在了OSS里，这份文件中直接通过元数据文件的url访问。这种访问方法在初次使用的时候会需要不到10秒的加载时间，得益于缓存机制，后续的访问速度与本地元数据文件的方案一样快。此方案能够有效解决元数据更新导致的匹配问题，每次重建的连接都会加载最新的元数据文件。
+# 5. 收集结果并转换为 Parquet
+python collect_results.py
+python convert_to_parquet.py
 
-- 我们同样还测试了使用Postgres保存元数据的方案。这种方案在内网环境下速度良好，但是在公网环境下速度非常慢。我们猜测是由于Postgres上的数据无法在本地缓存导致的。
+# 6. （可选）直接查询本地 Parquet
+python query_parquet.py
 
-- ~~在树莓派设备上运行DuckDB时，如果使用官网url安装CLI，会在连接湖仓时报错。需要在 `https://github.com/duckdb/duckdb/releases` 页面下载linux-arm64版本。~~
+# 7. 上传至 MinIO 并创建元数据目录
+python upload_to_minio.py
+python create_metadata.py
 
-- 在树莓派设备上运行已成功，现在DuckDB官网的CLI版本已正常，可以正常连接湖仓。
+# 8. 通过元数据目录查询
+python query_via_metadata.py
+```
 
-- 重要，注意：que_push的时候，如果是用的docker，`docker-compose.yml`里**千万不要**写`restart: always`或者`restart: unless-stopped`。否则，所有任务都计算完会自动开始第二轮计算。我和我的同事在第一次开展工作的时候，都踩过这个坑😂。
+该示例支持通过环境变量配置所有端点、队列名和凭证。完整的环境变量列表及故障排除（包括 Docker Hub 不可达时通过 Homebrew 启动 MinIO 的方法）请参见 `examples/minimal_workflow/README.md`。
 
-- 尝试了使用[OpenClaw](https://openclaw.ai)查询数据库，把项目的链接交给Agent，能够顺利查询到数据。真方便。
+## 塑性预测
+
+`predict_plasticity/` 目录包含一个可直接使用的塑性分类预测模块：
+
+- `model_files/model.onnx` — 训练好的 ONNX 分类模型。
+- `model_files/minmax_params.pkl` — Min-Max 归一化参数。
+- `model_files/feature_names.json` — 模型所需的描述符列名。
+
+该模块读取描述符 parquet 文件（如 `hea_6_c_*.parquet`），进行 Min-Max 归一化后通过 ONNX 模型推理，输出预测结果 parquet 文件。详细用法请参考 `predict_plasticity/README.md`。
+
+## 注意事项
+
+- 本项目的真实数据存储在与 S3 协议兼容的对象存储中。元数据类似于数据目录，可支持多用户同时访问。
+- `init.sql` 中包含湖仓访问配置（例如 `s3_endpoint='idmlakehouse.tmslab.cn';`）。您也可以将其内容粘贴到 DuckDB CLI 中，或在 Python 中使用，效果相同。
+- 若将元数据保存为 SQLite 格式并执行 `INSTALL sqlite`，多个用户可共享同一个元数据文件访问湖仓。
+- 普通用户仅拥有**只读权限**，请勿尝试修改数据，不会成功。
+- 若习惯用 Python 进行数据分析，建议使用 **Polars** 而非 Pandas。以上示例中的两表 JOIN 场景下，Polars 的惰性加载能显著节省内存并提高查询效率；Pandas 需要把整个表缓存到内存，4 GB 的压缩表在查询过程中可能消耗约 30 GB 内存。
+- CPU 核心数并非越多越好。在我们的测试中，4~8 核是最佳甜点；过多核心会导致不必要的数据分割与传输，反而降低性能。全库查询 3 分 22 秒的成绩即来自一台 4 核 64 GB 虚拟机。
+- `descriptor/` 路径下还提供了 `init-standalone.sql`，无需本地元数据即可连接湖仓。它直接通过 OSS 上的元数据文件 URL 访问，首次连接加载时间不到 10 秒，后续借助缓存机制速度与本地元数据方案相当。该方式还能避免元数据更新导致的版本不匹配问题。
+- 我们也测试了使用 Postgres 保存元数据的方案：内网环境下速度良好，但公网环境下非常慢，推测是因为 Postgres 上的数据无法在本地缓存。
+- 在 Docker 中运行 `que_push.py` 时，`docker-compose.yml` 里**千万不要**写 `restart: always` 或 `restart: unless-stopped`。否则所有任务计算完后容器会自动重启并开始第二轮计算。我和我的同事第一次运行时都踩过这个坑 😂。
+- 我们已成功通过 [OpenClaw](https://openclaw.ai) 将项目链接交给 Agent，由其完成数据查询。
 
   <img src="demo-pics/try_openclaw.png" style="height: 300px">
+
+## 相关工具
+
+### AI Agent 技能
+
+- **自然语言查询数据库：** [agent-hea6-ducklake](https://github.com/Wolido/agent-hea6-ducklake)
+- **分布式计算部署：** [agent-idm-gridcore](https://github.com/Wolido/agent-idm-gridcore)
+
+### 分布式计算框架
+
+- **[IDM-GridCore](https://github.com/Wolido/idm-gridcore)** — 面向大规模描述符生成的众包并行计算框架。
 
 ## 许可协议
 
