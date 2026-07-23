@@ -10,7 +10,6 @@ The data were converted from `Supplementary Datasets.xlsx` (prepared for the *Na
 |---|---|
 | `elemental_properties.csv` | Main elemental properties table (English). Each row is one physical/chemical property; columns are the 15 HEA elements plus reference IDs and full citations. |
 | `enthalpy.csv` | Binary mixing-enthalpy matrix (kJ/mol) for the 15 HEA elements. |
-| `elemental_properties_full.csv` | Extended version that also contains Chinese property names and URLs/literature references. |
 
 ## Reference
 
