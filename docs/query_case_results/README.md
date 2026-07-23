@@ -4,29 +4,33 @@ This folder contains the benchmark screenshots used in the *Nature Communication
 
 ---
 
-## PostgreSQL
+## Side-by-side comparison: full-table queries
 
-### Fig. 1 — Querying the entire composition dataset
+### Fig. 1 — DuckLake: Querying the entire composition dataset
 
-Querying all rows of `hea_6_c_1921` (≈10.76 M rows, 195 columns) via PostgreSQL. **Elapsed time: 00:26:25.83.**
+Querying all rows of `hea_con_6` (≈10.76 M rows, 7 columns) through the DuckLake lakehouse. **Elapsed time: 67.724 s (≈1 min 7 s).**
 
 ![Fig. 1](assets/fig_01.png)
 
-### Fig. 2 — Querying the entire composition dataset (full status bar)
+### Fig. 2 — PostgreSQL: Querying the entire descriptor table
 
-Same query as Fig. 1 with the full status bar visible. **Elapsed time: 00:26:25.83.**
+Querying all rows of `hea_6_c_1921` (≈10.76 M rows, 195 columns) via PostgreSQL. **Elapsed time: 00:26:25.83.**
 
 ![Fig. 2](assets/fig_02.png)
 
+---
+
+## PostgreSQL
+
 ### Fig. 3 — Querying four columns in one HEA family
 
-Projection query (`con_index, ave_fe1, rmse_ft2, range_fp5`) on `hea_6_c_128` (≈10.76 M rows). **Elapsed time: 00:01:13.42.**
+Projection query (`con_index, ave_fe1, rmse_ft2, range_fp5`) on `hea_6_c_128` (≈10.76 M rows) via PostgreSQL. **Elapsed time: 00:01:13.42.**
 
 ![Fig. 3](assets/fig_03.png)
 
 ### Fig. 4 — Reverse query by descriptor values
 
-Reverse lookup of compositions in `hea_6_c_192` joined with `hea_con_6`, filtered by descriptor thresholds. **Elapsed time: 00:02:19.08.**
+Reverse lookup of compositions in `hea_6_c_192` joined with `hea_con_6`, filtered by descriptor thresholds, via PostgreSQL. **Elapsed time: 00:02:19.08.**
 
 ![Fig. 4](assets/fig_04.png)
 
