@@ -6,6 +6,7 @@
 ---
 
 # HEA DuckLake
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22075210.svg)](https://doi.org/10.5281/zenodo.22075210)
 
 **A lakehouse database for six-principal-element high-entropy alloys (HEAs).**
 
@@ -33,6 +34,7 @@ The repository contains:
 - [Plasticity Prediction](#plasticity-prediction)
 - [Notes & Tips](#notes--tips)
 - [Related Tools](#related-tools)
+- [Citation](#citation)
 - [License](#license)
 
 ## Quick Start
@@ -262,6 +264,12 @@ The module reads descriptor parquet files (e.g. `hea_6_c_*.parquet`), applies Mi
 ### Distributed Computing Framework
 
 - **[IDM-GridCore](https://github.com/Wolido/idm-gridcore)** — crowdsourced parallel computing for massive-scale descriptor generation.
+
+## Citation
+
+If you use HEA DuckLake in your research, please cite:
+
+> Huang, X., Liu, Y., Shi, S. et al. HEA DuckLake: Metadata and Application Cases for a Trillion-Scale HEA Data Lakehouse (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.22075211 (2026).
 
 ## License
 

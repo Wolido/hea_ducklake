@@ -6,6 +6,7 @@
 ---
 
 # HEA DuckLake
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22075210.svg)](https://doi.org/10.5281/zenodo.22075210)
 
 **六主元高熵合金（HEA）湖仓数据库。**
 
@@ -33,6 +34,7 @@
 - [塑性预测](#塑性预测)
 - [注意事项](#注意事项)
 - [相关工具](#相关工具)
+- [引用](#引用)
 - [许可协议](#许可协议)
 
 ## 快速开始
@@ -262,6 +264,12 @@ python query_via_metadata.py
 ### 分布式计算框架
 
 - **[IDM-GridCore](https://github.com/Wolido/idm-gridcore)** — 面向大规模描述符生成的众包并行计算框架。
+
+## 引用
+
+如果您在研究中使用了 HEA DuckLake，请引用（citation entry kept in original English）：
+
+> Huang, X., Liu, Y., Shi, S. et al. HEA DuckLake: Metadata and Application Cases for a Trillion-Scale HEA Data Lakehouse (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.22075211 (2026).
 
 ## 许可协议
 
