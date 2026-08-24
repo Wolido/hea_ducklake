@@ -1,0 +1,58 @@
+cff-version: 1.2.0
+message: If you use this software/data, please cite it using the metadata from this file.
+title: "HEA DuckLake: Metadata and Application Cases for a Trillion-Scale HEA Data Lakehouse"
+type: software
+authors:
+  - family-names: Huang
+    given-names: Xiaoya
+  - family-names: Liu
+    given-names: Yu
+  - family-names: Shi
+    given-names: Shuo
+  - family-names: Zhang
+    given-names: Yuanyuan
+  - family-names: Liang
+    given-names: Zengzeng
+  - family-names: Zhou
+    given-names: Miao
+  - family-names: Fu
+    given-names: Hanwei
+  - family-names: Zheng
+    given-names: Lei
+  - family-names: Kang
+    given-names: Peng
+repository-code: https://github.com/Wolido/hea_ducklake
+version: 1.0.0
+date-released: "2026-08-24"
+license: CC-BY-4.0
+keywords:
+  - high-entropy alloys
+  - materials databases
+  - data lakehouse
+  - DuckDB
+  - high-throughput screening
+  - data sharing
+preferred-citation:
+  type: article
+  title: "Trillion-Scale Integrated Framework for High-Throughput Materials Databases and Seamless Sharing"
+  journal: Nature Communications
+  year: 2026
+  authors:
+    - family-names: Huang
+      given-names: Xiaoya
+    - family-names: Liu
+      given-names: Yu
+    - family-names: Shi
+      given-names: Shuo
+    - family-names: Zhang
+      given-names: Yuanyuan
+    - family-names: Liang
+      given-names: Zengzeng
+    - family-names: Zhou
+      given-names: Miao
+    - family-names: Fu
+      given-names: Hanwei
+    - family-names: Zheng
+      given-names: Lei
+    - family-names: Kang
+      given-names: Peng
