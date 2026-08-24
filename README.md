@@ -269,7 +269,7 @@ The module reads descriptor parquet files (e.g. `hea_6_c_*.parquet`), applies Mi
 
 If you use HEA DuckLake in your research, please cite:
 
-> Huang, X., Liu, Y., Shi, S. et al. HEA DuckLake: Metadata and Application Cases for a Trillion-Scale HEA Data Lakehouse (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.22075211 (2026).
+> Huang, X., Liu, Y., Shi, S. et al. Trillion-Scale Integrated Framework for High-Throughput Materials Databases and Seamless Sharing (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.22075211 (2026).
 
 ## License
 

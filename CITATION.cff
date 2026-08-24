@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: If you use this software/data, please cite it using the metadata from this file.
-title: "HEA DuckLake: Metadata and Application Cases for a Trillion-Scale HEA Data Lakehouse"
+title: "Trillion-Scale Integrated Framework for High-Throughput Materials Databases and Seamless Sharing"
 type: software
 authors:
   - family-names: Huang
