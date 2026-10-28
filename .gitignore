@@ -3,3 +3,4 @@
 __pycache__/
 */target/
 query_csv/
+.DS_Store
