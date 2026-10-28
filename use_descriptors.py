@@ -12,7 +12,7 @@ conn.execute("INSTALL ducklake;") # If you have already installed ducklake, you 
 # Set up the connection
 conn.execute("SET s3_endpoint='idmlakehouse.tmslab.cn';")
 conn.execute("SET s3_url_style='path';")
-conn.execute("SET s3_use_ssl='false';")
+conn.execute("SET s3_use_ssl='true';")
 conn.execute("""
 ATTACH 'ducklake:./descriptors/metadata.ducklake' as hea (
     DATA_PATH 's3://idmdatabase/hea'
